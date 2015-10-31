@@ -32,7 +32,7 @@ africaStream.pipe(parser);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(req.query);
+    console.log(req.query)
     res.render('index', { title: 'Express', data: mydata});
 });
 
