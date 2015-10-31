@@ -1,5 +1,5 @@
-window.addEventListener("load", run);
+window.onload = run;
 
-var run = function(){
-    alert("Window Ready");
+function run(){
+    console.log("Window Ready");
 };

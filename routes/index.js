@@ -2,16 +2,26 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var parse = require('csv-parse');
+var env = "dev";
 
-var africaStream = fs.createReadStream("./data/africaSmall.csv")
-/*
-    americaStream = fs.createReadStream("./data/america.csv"),
-    apacStream = fs.createReadStream("./data/apac.csv"),
-    europeStream = fs.createReadStream("./data/europe.csv"),
-    middleStream = fs.createReadStream("./data/middle.csv");
-*/
+if(env === "dev"){
+    var africaStream = fs.createReadStream("./data/africaSmall.csv")
+}
+if(env === "prod"){
+    var africaStream = fs.createReadStream("./data/africa.csv"),
+        americaStream = fs.createReadStream("./data/america.csv"),
+        apacStream = fs.createReadStream("./data/apac.csv"),
+        europeStream = fs.createReadStream("./data/europe.csv"),
+        middleStream = fs.createReadStream("./data/middle.csv");
+}
 
-var mydata = [];
+var mydata = {
+    "Americas": "Not Loaded Yet",
+    "Africa": "Not Loaded Yet",
+    "Asia": "Not Loaded Yet",
+    "Europe": "Not Loaded Yet",
+    "Middle-East": "Not Loaded Yet",
+};
 
 var parserOptions = {
     "delimiter": ",",       // Separates cols by commas
@@ -22,7 +32,7 @@ var parserOptions = {
 
 //
 var parserCallback = function(err, data){
-    mydata = data;
+    mydata.Africa = data;
     //console.log("Data Loaded: %d", mydata.length);
 };
 
@@ -33,7 +43,13 @@ africaStream.pipe(parser);
 /* GET home page. */
 router.get('/', function(req, res, next) {
     console.log(req.query)
-    res.render('index', { title: 'Express', data: mydata});
+    /*
+        req.query.countries = []
+        req.query.q1
+        req.query.q2
+    */
+    var data = calculate(countries, q1, q2)
+    res.render('index', { title: 'Express', data: data});
 });
 
 module.exports = router;
