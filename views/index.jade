@@ -1,8 +1,7 @@
 extends layout
 
 block content
-    h1= title
-    p Welcome to #{title}
+    h1 Project 3 - Massive Pew Comparisons
     div#form
         p Continents
         p
@@ -17,8 +16,8 @@ block content
             span Americas:
             input#muricaCheck(type="checkbox", value="Americas")
         p Question 1
-            select(id="q1")
+            select#q1
         p Question 2
-            select(id="q2")
-    pre
-        code= JSON.stringify(data, null, 4)
+            select#q2
+        div
+            svg#viz(height=600, width=800)

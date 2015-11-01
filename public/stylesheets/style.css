@@ -10,3 +10,7 @@ a {
 select {
     width: 100%;
 }
+
+.datas {
+    font-size: 25px;
+}

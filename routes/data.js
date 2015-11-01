@@ -46,7 +46,9 @@ router.get('/', function(req, res, next) {
         req.query.q1,
         req.query.q2
     )
-    res.send(data);
+    console.log(data);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(data));
 });
 
 function calculate(countries, q1, q2){
@@ -57,7 +59,7 @@ function calculate(countries, q1, q2){
             for(var i = 0; i < mydata[key].length; i++){
                 q1_answer = mydata[key][i][q1];
                 q2_answer = mydata[key][i][q2];
-                console.log(q1_answer, q2_answer)
+                // console.log(q1_answer, q2_answer)
                 if(q1_answer in answers){
                     if(q2_answer in answers[q1_answer]){
                         answers[q1_answer][q2_answer] += 1;
@@ -65,7 +67,7 @@ function calculate(countries, q1, q2){
                     else{
                         answers[q1_answer][q2_answer] = 1;
                     }
-                } 
+                }
                 else{
                     answers[q1_answer] = {};
                     answers[q1_answer][q2_answer] = 1;
