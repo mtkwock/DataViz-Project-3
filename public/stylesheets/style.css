@@ -1,6 +1,16 @@
 body {
     padding: 50px;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 14px;
+    font-family: monospace;
+    background-color: #2F2F2F;
+    color: #00DDDD;
+    fill: #00DDDD;
+}
+
+select {
+    background-color: inherit;
+    color: inherit;
+    border-color:
 }
 
 a {
@@ -11,6 +21,41 @@ select {
     width: 100%;
 }
 
+#viz {
+    border: 1px solid #B7B7B7;
+    background-color: #2D2D2D;
+    font-weight: bold;
+    color: inherit;
+    fill: inherit;
+}
+
 .datas {
+    font-family: inherit;
     font-size: 25px;
+}
+
+.titleage {
+    font-family: inherit;
+    font-size: 25px;
+}
+
+.rows {
+    font-family: inherit;
+    font-size: 25px;
+}
+
+.cols {
+    font-family: inherit;
+    font-size: 25px;
+}
+
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(181, 127, 127, 0.10);
+    color: cyan;
+    border-radius: 2px;
+    font-family: monospace;
+    text-align: center;
 }

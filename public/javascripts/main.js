@@ -11,7 +11,7 @@ function run(){
     for(prop in questions){
         questionArray.push({
             "name": prop,
-            "question": questions[prop]
+            "question": prop + ": " + questions[prop]
         });
     }
     d3.select("#q1")
@@ -20,17 +20,24 @@ function run(){
         .enter()
         .append("option")
         .attr("value", function(d){ return d.name; })
-        .text(function(d){ return d.question; });
+        .text(function(d){ return d.question; })
+        .property("selected", function(d, idx){
+            return idx === 3;
+        });
     d3.select("#q2")
         .selectAll("option")
         .data(questionArray)
         .enter()
         .append("option")
         .attr("value", function(d){ return d.name; })
-        .text(function(d){ return d.question; });
+        .text(function(d){ return d.question; })
+        .property("selected", function(d, idx){
+            return idx === 5;
+        });
 
     d3.select("#q1").on("change", update);
     d3.select("#q2").on("change", update);
+    update();
 };
 
 var restRequest = function(restType, url, isAsync, body, callback){
@@ -84,29 +91,41 @@ var update = function(){
     });
 };
 
-var vizWidthFrac = 0.75;
-var vizHeightFrac = 0.8;
+var vizFrac = {
+    width: 0.75,
+    height: 0.7,
+    titleHeight: 0.2
+}
+
+var vizW = function(){
+    return byId("viz").width.baseVal.value;
+};
+
+var vizH = function(){
+    return byId("viz").height.baseVal.value;
+};
 
 var calcX = function(pos, total){
-    var widthTotal = byId("viz").width.baseVal.value;
-    var widthAvail = widthTotal * vizWidthFrac;
+    var widthTotal = vizW();
+    var widthAvail = widthTotal * vizFrac.width;
     var widthOffst = widthTotal - widthAvail;
-    var frac = pos / total + 1/(2 * total);
+    var frac = (pos + 0.5) / total;
     return widthOffst + widthAvail * frac;
 };
 
 var calcY = function(pos, total){
-    var heightTotal = byId("viz").height.baseVal.value;
-    var heightAvail = heightTotal * vizHeightFrac;
-    // var heightOffst = heightTotal - heightAvail;
-    var frac = pos / total + 1/(2 * total);
-    console.log(heightTotal)
-    return heightAvail * frac;
+    var heightTotal = vizH();
+    var heightAvail = heightTotal * vizFrac.height;
+    var heightOffst = heightTotal * vizFrac.titleHeight;
+    var frac = (pos + 0.5) / total;
+    return heightAvail * frac + heightOffst;
 };
 
 var curData = {};
 
 var graph = function(data){
+    var q1 = d3.select("#q1").node().value;
+    var q2 = d3.select("#q2").node().value;
     console.log(data);
     var rows = Object.getOwnPropertyNames(data);
     var cols = rows.reduce(function(acc, rowName){
@@ -149,8 +168,8 @@ var graph = function(data){
         return {
             idx: idx,
             val: rowName,
-            x: calcX(idx-0.25, rl),
-            y: calcY(rl + 0, rl) + Math.pow(-1, idx) * 20
+            x: calcX(idx, rl),
+            y: calcY(rl, rl) + Math.pow(-1, idx) * 20
         };
     });
 
@@ -168,28 +187,89 @@ var graph = function(data){
 
     curData = datb;
 
-    d3.select("#viz").selectAll(".datas").remove().data(datb)
+    d3.selectAll("#viz > *").remove();
+
+    d3.select("#viz").selectAll(".datas").data(datb)
         .enter()
         .append("text")
         .attr("class", "datas")
         .attr("x", function(d){ return d.x; })
         .attr("y", function(d){ return d.y; })
+        .attr("dy", "-0.5em")
+        .attr("text-anchor", "middle")
         .text(function(d){ return d.val; })
 
-    d3.select("#viz").selectAll(".rows").remove().data(rowDat)
+    d3.select("#viz").selectAll(".rows").data(rowDat)
         .enter()
         .append("text")
         .attr("class", "rows")
         .attr("x", function(d){ return d.x; })
         .attr("y", function(d){ return d.y; })
-        .text(function(d){ return d.val; })
+        .attr("dy", "-0.5em")
+        .attr("text-anchor", "middle")
+        .text(function(d){
+            if(d.val === " " || d.val === "undefined"){
+                return "N/A";
+            }
+            var d3el = d3.select("#viz")
+                .selectAll(".dummy")
+                .data(" ")
+                .enter()
+                .append("text")
+                .attr("class", "cols")
+                .attr("id", "dummy")
+                .text(d.val);
 
-    d3.select("#viz").selectAll(".cols").remove().data(colDat)
+            var maxWidth = vizFrac.width * vizW() * 2 / rl;
+
+            if(d3el[0][0].clientWidth > maxWidth){
+                d3el.remove();
+                return "tl;dr";
+            }
+            d3el.remove();
+            return d.val;
+        })
+
+    d3.select("#viz").selectAll(".cols").data(colDat)
         .enter()
         .append("text")
         .attr("class", "cols")
         .attr("x", function(d){ return d.x; })
         .attr("y", function(d){ return d.y; })
-        .text(function(d){ return d.val; })
+        .attr("dy", "-0.5em")
+        .attr("text-anchor", "middle")
+        .text(function(d){
+            if(d.val === " " || d.val === "undefined"){
+                return "N/A";
+            }
+            var d3el = d3.select("#viz")
+                .selectAll(".dummy")
+                .data(" ")
+                .enter()
+                .append("text")
+                .attr("class", "rows")
+                .attr("id", "dummy")
+                .text(d.val);
 
+            console.log(d3el[0][0].clientWidth + " " + d.val);
+
+            if (d3el[0][0].clientWidth > (1-vizFrac.width) * vizW()){
+                d3el.remove();
+                return "tl;dr";
+            }
+
+            d3el.remove();
+            return d.val;
+        })
+
+    d3.select("#viz").selectAll(".titleage").data([
+            q1 + " vs. " + q2
+        ]).enter()
+        .append("text")
+        .attr("class", "titleage")
+        .attr("x", vizW() / 2)
+        .attr("y", vizFrac.titleHeight * vizH()/2)
+        .attr("dy", "0em")
+        .attr("text-anchor", "middle")
+        .text(function(d){ return d; })
 };
