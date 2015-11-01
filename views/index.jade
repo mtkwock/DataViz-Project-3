@@ -1,7 +1,24 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  pre
-      code= JSON.stringify(data, null, 4)
+    h1= title
+    p Welcome to #{title}
+    div#form
+        p Continents
+        p
+            span Africa:
+            input#africaCheck(type="checkbox", value="Africa")
+            span Asia: 
+            input#asiapcCheck(type="checkbox", value="Asia")
+            span Europe:
+            input#europeCheck(type="checkbox", value="Europe")
+            span Middle-East: 
+            input#middleCheck(type="checkbox", value="Middle-East")
+            span Americas:
+            input#muricaCheck(type="checkbox", value="Americas")
+        p Question 1
+            select(id="q1")
+        p Question 2
+            select(id="q2")
+    pre
+        code= JSON.stringify(data, null, 4)
