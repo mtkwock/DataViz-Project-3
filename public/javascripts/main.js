@@ -93,8 +93,8 @@ var update = function(){
 
 var vizFrac = {
     width: 0.75,
-    height: 0.7,
-    titleHeight: 0.2
+    height: 0.65,
+    titleHeight: 0.15
 }
 
 var vizW = function(){

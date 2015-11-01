@@ -7,10 +7,23 @@ body {
     fill: #00DDDD;
 }
 
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+option {
+    background: #2F2F2F;
+    color: inherit;
+    text-shadow:0 1px 0 rgba(0,0,0,0.4);
+}
+
 select {
     background-color: inherit;
     color: inherit;
-    border-color:
 }
 
 a {
