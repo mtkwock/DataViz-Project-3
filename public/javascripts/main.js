@@ -138,14 +138,14 @@ var graph = function(data){
     }, []);
 
     var datb = [];
-
+    var maxVal = 1;
     var rl = rows.length;
     var cl = cols.length;
-
     for(var i = 0; i < rl; i++){
         for(var j = 0; j < cl; j++){
-            var dat = data[rows[i]][cols[j]];
+            var dat = data[rows[i]][cols[j]];          
             if(dat){
+                maxVal = Math.max(maxVal, dat);
                 datb.push({
                     val: dat,
                     row: rows[i],
@@ -163,6 +163,8 @@ var graph = function(data){
             }
         }
     }
+    var maxDia = Math.min(vizW()*vizFrac.width/rl, vizH()*vizFrac.height/cl);
+    console.log(maxDia, maxVal);
 
     var rowDat = rows.map(function(rowName, idx){
         return {
@@ -189,6 +191,16 @@ var graph = function(data){
 
     d3.selectAll("#viz > *").remove();
 
+    d3.select("#viz").selectAll("circle").data(datb)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d){ return d.x; })
+        .attr("cy", function(d){ return d.y; })
+        .attr("text-anchor", "middle")
+        .attr("fill", "#F9F9F9")
+        .attr("r", function(d){ return Math.sqrt(d.val/maxVal) * maxDia/2; })
+        
+
     d3.select("#viz").selectAll(".datas").data(datb)
         .enter()
         .append("text")
@@ -197,7 +209,10 @@ var graph = function(data){
         .attr("y", function(d){ return d.y; })
         .attr("dy", "-0.5em")
         .attr("text-anchor", "middle")
-        .text(function(d){ return d.val; })
+        .text(function(d){
+
+            return d.val;
+        })
 
     d3.select("#viz").selectAll(".rows").data(rowDat)
         .enter()
@@ -224,7 +239,7 @@ var graph = function(data){
 
             if(d3el[0][0].clientWidth > maxWidth){
                 d3el.remove();
-                return "tl;dr";
+                return d.val.substring(0,4) + "...";
             }
             d3el.remove();
             return d.val;
@@ -255,7 +270,7 @@ var graph = function(data){
 
             if (d3el[0][0].clientWidth > (1-vizFrac.width) * vizW()){
                 d3el.remove();
-                return "tl;dr";
+                return d.val.substring(0,7) + "...";
             }
 
             d3el.remove();
