@@ -54,26 +54,27 @@ router.get('/', function(req, res, next) {
 function calculate(countries, q1, q2){
     console.log(countries,q1,q2);
     var answers = {}
-    countries.forEach(function(key){
-            console.log(key)
-            for(var i = 0; i < mydata[key].length; i++){
-                q1_answer = mydata[key][i][q1];
-                q2_answer = mydata[key][i][q2];
-                // console.log(q1_answer, q2_answer)
-                if(q1_answer in answers){
-                    if(q2_answer in answers[q1_answer]){
-                        answers[q1_answer][q2_answer] += 1;
-                    }
-                    else{
-                        answers[q1_answer][q2_answer] = 1;
-                    }
+    key = "Americas"
+    for(var i = 0; i < mydata[key].length; i++){
+        console.log(mydata[key][i]["COUNTRY"])
+        if(countries.indexOf(mydata[key][i]["COUNTRY"]) > -1){
+            q1_answer = mydata[key][i][q1];
+            q2_answer = mydata[key][i][q2];
+            // console.log(q1_answer, q2_answer)
+            if(q1_answer in answers){
+                if(q2_answer in answers[q1_answer]){
+                    answers[q1_answer][q2_answer] += 1;
                 }
                 else{
-                    answers[q1_answer] = {};
                     answers[q1_answer][q2_answer] = 1;
                 }
             }
-    });
+            else{
+                answers[q1_answer] = {};
+                answers[q1_answer][q2_answer] = 1;
+            }
+        }
+    }
     return answers
 }
 

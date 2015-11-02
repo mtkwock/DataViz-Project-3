@@ -6,6 +6,28 @@ var byId = function(id){
     return document.getElementById(id);
 };
 
+var countries = {
+    "United States": true,
+    "Canada": true,
+    "Mexico": true,
+    "Chile": true,
+    "Brazil": true,
+    "Argentina": true,
+    "Bolivia": true,
+    "Venezuela": true,
+    "El Salvador": true
+}
+
+var countriesString = function(){
+    var str = "";
+    for(var key in countries){
+        if(countries[key]){
+            str += key+","
+        }
+    }
+    return str
+}
+
 function run(){
     console.log("Window Ready");
     for(prop in questions){
@@ -34,6 +56,11 @@ function run(){
         .property("selected", function(d, idx){
             return idx === 5;
         });
+
+    d3.selectAll("input").on("change", function(e){
+        countries[this.value] = !countries[this.value];
+        update();
+    });
 
     d3.select("#q1").on("change", update);
     d3.select("#q2").on("change", update);
@@ -66,20 +93,13 @@ var restRequest = function(restType, url, isAsync, body, callback){
     };
 }
 
-var update = function(){
-    var continents = {
-        "Africa": false,
-        "Asia": false,
-        "Americas": true,
-        "Europe": false,
-        "Middle-East": false
-    };
 
+var update = function(){
     var q1 = d3.select("#q1").node().value;
     var q2 = d3.select("#q2").node().value;
     // Write REST call to /data?q1="q1"&q2="q2"&countries=Americas
     console.log([q1, q2]);
-    var url = "http://localhost:8000/data?q1=" + q1 + "&q2=" + q2 + "&countries=Americas";
+    var url = "http://localhost:8000/data?q1=" + q1 + "&q2=" + q2 + "&countries=" + countriesString();
 
     restRequest('GET', url, true, null, function(err, data){
         if(err){
