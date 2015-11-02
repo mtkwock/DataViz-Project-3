@@ -213,6 +213,31 @@ var graph = function(data){
 
             return d.val;
         })
+    var tiprect = d3.select("#viz").append("rect")
+        .style("fill", "#000000")
+        .attr("rx", 5)
+    var tooltip = d3.select("#viz").append("text")
+        .attr("class","tooltip")
+        .style("opacity",0)
+        .style("background-color", "#FFFFFF")
+        .text("tooltip")
+
+    var movetooltip = function(d){
+        tooltip.attr("x", d.x)
+        .attr("y", d.y)
+        .style("opacity", 1)
+        .text(d.val)
+
+        var bbox = tooltip.node().getBBox()
+        var padding = 3
+        tiprect.attr("x", bbox.x - padding)
+        .attr("y", bbox.y - padding)
+        .attr("width", bbox.width + (padding*2))
+        .attr("height", bbox.height + (padding*2))
+    }
+
+    
+
 
     d3.select("#viz").selectAll(".rows").data(rowDat)
         .enter()
@@ -243,7 +268,7 @@ var graph = function(data){
             }
             d3el.remove();
             return d.val;
-        })
+        }).on("mouseover", movetooltip)
 
     d3.select("#viz").selectAll(".cols").data(colDat)
         .enter()
@@ -275,7 +300,7 @@ var graph = function(data){
 
             d3el.remove();
             return d.val;
-        })
+        }).on("mouseover", movetooltip)
 
     d3.select("#viz").selectAll(".titleage").data([
             q1 + " vs. " + q2
